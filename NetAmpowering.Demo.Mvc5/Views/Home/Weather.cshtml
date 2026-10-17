@@ -1,0 +1,16 @@
+@model System.Collections.Generic.IList<NetAmpowering.Demo.Mvc5.Forecast>
+@{
+    ViewBag.Title = "Meteo";
+}
+<h1>Prévisions</h1>
+<table>
+  <tr><th>Date</th><th>Temp. (C)</th><th>Résumé</th></tr>
+  @foreach (var f in Model)
+  {
+    <tr>
+      <td>@f.ForecastDate.ToShortDateString()</td>
+      <td>@f.TemperatureC</td>
+      <td>@f.Summary</td>
+    </tr>
+  }
+</table>

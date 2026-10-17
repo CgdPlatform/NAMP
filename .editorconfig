@@ -1,0 +1,43 @@
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+# Directives using : System.* d'abord, puis ordre alphabétique, sans lignes vides entre les groupes.
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# Les using inutiles sont signalés (IDE0005) ; `dotnet format style --diagnostics IDE0005` les supprime.
+dotnet_diagnostic.IDE0005.severity = warning
+
+# ── StyleCop.Analyzers ───────────────────────────────────────────────────────────────────────
+# Ordre des éléments (SA12xx), ordre des using et documentation XML (SA16xx) : obligatoires (erreurs).
+# Règles désactivées :
+#   SA1633-SA1641  en-têtes de fichier (la licence est portée par LICENSE et par les packages)
+#   SA1101         préfixe « this. » (convention du dépôt : pas de this. superflu)
+#   SA1309         champs sans préfixe « _ » (convention du dépôt : _champ)
+#   SA1623, SA1642 formulations imposées en anglais (« Gets or sets… ») alors que la documentation est en français
+dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1634.severity = none
+dotnet_diagnostic.SA1635.severity = none
+dotnet_diagnostic.SA1636.severity = none
+dotnet_diagnostic.SA1637.severity = none
+dotnet_diagnostic.SA1638.severity = none
+dotnet_diagnostic.SA1639.severity = none
+dotnet_diagnostic.SA1640.severity = none
+dotnet_diagnostic.SA1641.severity = none
+dotnet_diagnostic.SA1101.severity = none
+dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1623.severity = none
+dotnet_diagnostic.SA1642.severity = none
+
+# Les projets de démo regroupent volontairement plusieurs types par fichier et utilisent les champs
+# protégés imposés par WebForms : ni « un type par fichier » (SA1402, SA1649) ni champs privés (SA1401).
+[NetAmpowering.Demo.*/**.cs]
+dotnet_diagnostic.SA1402.severity = none
+dotnet_diagnostic.SA1649.severity = none
+dotnet_diagnostic.SA1401.severity = none
+dotnet_diagnostic.SA1306.severity = none

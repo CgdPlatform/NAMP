@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Demo ASP.NET WebForms (.NET Framework 4.7.2) : projet SDK-style qui compile dans bin\ et
+    s'execute directement sous IIS Express (voir README.md). Aucun Visual Studio requis pour builder.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>NetAmpowering.Demo.WebForms</RootNamespace>
+    <AssemblyName>NetAmpowering.Demo.WebForms</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <!-- IIS lit bin\ a la racine du site -->
+    <OutputPath>bin\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <NetAmpoweringUpdateBindingRedirects>true</NetAmpoweringUpdateBindingRedirects>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetAmpowering.AspNet" Version="1.0.0" />
+    <PackageReference Include="NetAmpowering.Observability.EntityFramework6" Version="1.0.0" />
+    <PackageReference Include="NetAmpowering.Coverage.AspNet" Version="1.0.0" />
+    <!-- Le weaver Fody : instrumente les methodes a la compilation (couverture de code en production) -->
+    <PackageReference Include="NetAmpowering.Coverage" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.9.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Configuration" />
+    <!-- Le package NetAmpowering.Coverage ne declare pas son weaver a Fody : chemin explicite vers la DLL du package -->
+    <WeaverFiles Include="$(NuGetPackageRoot)netampowering.coverage/1.0.0/lib/netstandard2.0/NetAmpowering.Coverage.dll" />
+    <None Include="FodyWeavers.xml" />
+  </ItemGroup>
+
+</Project>

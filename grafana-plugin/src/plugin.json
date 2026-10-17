@@ -1,0 +1,23 @@
+{
+  "type": "panel",
+  "name": "NetAmpowering",
+  "id": "netampowering-apm-panel",
+  "info": {
+    "description": "Dashboard panel for .NET, .NET Framework and Blazor applications via Prometheus / Mimir.",
+    "author": { "name": "Gaetan Delpierre" },
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "screenshots": [
+      { "name": "Production Code Coverage", "path": "img/screenshot-coverage-panel.png" }
+    ],
+    "version": "1.0.0",
+    "updated": "2026-05-17",
+    "keywords": ["dotnet", "blazor", "aspnet", "dotnet-framework", "coverage", "prometheus", "apm", "observability"]
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}

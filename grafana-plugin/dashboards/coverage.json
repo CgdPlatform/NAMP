@@ -1,0 +1,98 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus / Mimir",
+      "description": "Prometheus or Mimir datasource receiving NetAmpowering metrics via OTLP",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "netampowering-apm-panel",
+      "name": "NetAmpowering",
+      "version": "1.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": { "list": [] },
+  "description": "Production code coverage for .NET and Blazor applications — powered by NetAmpowering.Coverage and NetAmpowering.Coverage.Runtime.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 24, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "refIdHit": "A",
+        "refIdCalls": "B",
+        "queryHit": "max by (method_id,class,method,file,line) (max_over_time(coverage_method_hit{job=\"$service_name\"}[$__range]) * on(method_id) group_left(class,method,file,line) max by (method_id,class,method,file,line) (last_over_time(coverage_method_info{job=\"$service_name\"}[$__range])))",
+        "queryCalls": "max by (method_id,class,method,file,line) (max_over_time(coverage_method_calls_total{job=\"$service_name\"}[$__range]) * on(method_id) group_left(class,method,file,line) max by (method_id,class,method,file,line) (last_over_time(coverage_method_info{job=\"$service_name\"}[$__range])))"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "max by (method_id,class,method,file,line) (max_over_time(coverage_method_hit{job=\"$service_name\"}[$__range]) * on(method_id) group_left(class,method,file,line) max by (method_id,class,method,file,line) (last_over_time(coverage_method_info{job=\"$service_name\"}[$__range])))",
+          "instant": true,
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+          "expr": "max by (method_id,class,method,file,line) (max_over_time(coverage_method_calls_total{job=\"$service_name\"}[$__range]) * on(method_id) group_left(class,method,file,line) max by (method_id,class,method,file,line) (last_over_time(coverage_method_info{job=\"$service_name\"}[$__range])))",
+          "instant": true,
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "title": "NetAmpowering Coverage",
+      "type": "netampowering-apm-panel"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "tags": ["blazor", "dotnet", "coverage", "observability"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "includeAll": false,
+        "label": "Service",
+        "multi": false,
+        "name": "service_name",
+        "options": [],
+        "query": {
+          "query": "label_values(coverage_method_info, job)",
+          "refId": "StandardVariableQuery"
+        },
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "definition": "label_values(coverage_method_info, job)",
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "NetAmpowering Coverage",
+  "uid": "netampowering-coverage",
+  "version": 0
+}

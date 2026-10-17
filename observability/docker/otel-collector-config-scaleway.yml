@@ -1,0 +1,65 @@
+# OpenTelemetry Collector — Scaleway Cockpit config
+#
+# Data flow:
+#   Blazor app (4318 HTTP) → OTel Collector → Scaleway Tempo   (traces)
+#   Blazor app metrics     → OTel Collector → Scaleway Mimir   (metrics)
+#   spanmetrics connector  → Scaleway Mimir                     (RED metrics)
+#
+# Required environment variables (in observability/.env):
+#   SCALEWAY_COCKPIT_TOKEN=...
+#   SCALEWAY_TRACES_ENDPOINT=https://traces.cockpit.fr-par.scw.cloud
+#   SCALEWAY_METRICS_ENDPOINT=https://metrics.cockpit.fr-par.scw.cloud/api/v1/push
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 1024
+
+connectors:
+  spanmetrics:
+    namespace: span_metrics
+    histogram:
+      explicit:
+        buckets: [2ms, 4ms, 6ms, 10ms, 20ms, 40ms, 60ms, 80ms, 100ms, 200ms, 400ms, 600ms, 800ms, 1s, 2s, 5s]
+    dimensions:
+      - name: http.method
+        default: GET
+      - name: http.status_code
+      - name: http.route
+      - name: service.version
+    exemplars:
+      enabled: true
+    metrics_flush_interval: 15s
+
+exporters:
+  # Traces → Scaleway Tempo
+  otlp/scaleway:
+    endpoint: ${SCALEWAY_TRACES_ENDPOINT}
+    headers:
+      X-Token: "${SCALEWAY_COCKPIT_TOKEN}"
+
+  # Metrics → Scaleway Mimir (RED spanmetrics + .NET runtime)
+  prometheusremotewrite/scaleway:
+    endpoint: ${SCALEWAY_METRICS_ENDPOINT}
+    headers:
+      X-Token: "${SCALEWAY_COCKPIT_TOKEN}"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/scaleway, spanmetrics]
+
+    metrics:
+      receivers: [otlp, spanmetrics]
+      processors: [batch]
+      exporters: [prometheusremotewrite/scaleway]

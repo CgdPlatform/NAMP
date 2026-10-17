@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
+    <ProjectReference Include="..\NetAmpowering.Demo.Blazor.Client\NetAmpowering.Demo.Blazor.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetAmpowering.Observability" Version="1.0.0" />
+    <PackageReference Include="NetAmpowering.Observability.EntityFrameworkCore" Version="1.0.0-beta.1" />
+    <PackageReference Include="NetAmpowering.Coverage.Runtime" Version="1.0.0" />
+    <!-- Le weaver Fody : instrumente les méthodes à la compilation -->
+    <PackageReference Include="NetAmpowering.Coverage" Version="1.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Fody doit être référencé directement pour que ses targets MSBuild soient importés -->
+    <PackageReference Include="Fody" Version="6.9.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Chemin explicite vers le weaver (ProjectReference ne suffit pas pour la découverte Fody) -->
+  </ItemGroup>
+
+  <!-- Indique à Fody quel weaver activer -->
+  <ItemGroup>
+    <!-- Le package NetAmpowering.Coverage ne declare pas son weaver a Fody : chemin explicite vers la DLL du package -->
+    <WeaverFiles Include="$(NuGetPackageRoot)netampowering.coverage/1.0.0/lib/netstandard2.0/NetAmpowering.Coverage.dll" />
+    <None Include="FodyWeavers.xml" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,28 @@
+# Fins de ligne : LF dans le dépôt, CRLF (Windows) dans le répertoire de travail.
+# Repose sur core.autocrlf=true (défaut de Git for Windows) ; les fichiers texte sont convertis automatiquement.
+* text=auto
+
+# Toujours CRLF (outils Windows)
+*.sln   text eol=crlf
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Toujours LF : un script shell avec CRLF casse sous Linux/macOS (docker, CI)
+*.sh    text eol=lf
+Dockerfile text eol=lf
+
+# Binaires : jamais convertis
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.svgz  binary
+*.snk   binary
+*.nupkg binary
+*.snupkg binary
+*.dll   binary
+*.pdb   binary
+*.zip   binary
+*.woff  binary
+*.woff2 binary

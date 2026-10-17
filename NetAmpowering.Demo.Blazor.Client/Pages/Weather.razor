@@ -1,0 +1,61 @@
+@page "/weather"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@inject HttpClient Http
+@using NetAmpowering.Demo.Blazor.Client.Models
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (error != null)
+{
+    <p class="text-danger">@error</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        TraceRequest(method: nameof(OnInitializedAsync));
+        try
+        {
+            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("api/weatherforecast");
+        }
+        catch (Exception ex)
+        {
+            error = $"Erreur lors du chargement des prévisions : {ex.Message}";
+        }
+    }
+}

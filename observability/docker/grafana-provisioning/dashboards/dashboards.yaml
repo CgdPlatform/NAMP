@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  # ── NetAmpowering — production code coverage dashboard (baked into the Grafana image) ──
+  - name: NetAmpowering
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards

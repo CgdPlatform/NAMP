@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Demo ASP.NET MVC 5 (.NET Framework 4.7.2) : projet SDK-style qui compile dans bin\ et
+    s'execute directement sous IIS Express (voir README.md). Les vues .cshtml sont compilees par ASP.NET a la volee.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>NetAmpowering.Demo.Mvc5</RootNamespace>
+    <AssemblyName>NetAmpowering.Demo.Mvc5</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <OutputPath>bin\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NetAmpoweringUpdateBindingRedirects>true</NetAmpoweringUpdateBindingRedirects>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetAmpowering.AspNet" Version="1.0.0" />
+    <PackageReference Include="NetAmpowering.AspNet.Mvc" Version="1.0.0" />
+    <PackageReference Include="NetAmpowering.Observability.NHibernate" Version="1.0.0" />
+    <PackageReference Include="NetAmpowering.Coverage.AspNet" Version="1.0.0" />
+    <PackageReference Include="NetAmpowering.Coverage" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.9.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Configuration" />
+    <!-- Le package NetAmpowering.Coverage ne declare pas son weaver a Fody : chemin explicite vers la DLL du package -->
+    <WeaverFiles Include="$(NuGetPackageRoot)netampowering.coverage/1.0.0/lib/netstandard2.0/NetAmpowering.Coverage.dll" />
+    <None Include="FodyWeavers.xml" />
+  </ItemGroup>
+
+</Project>

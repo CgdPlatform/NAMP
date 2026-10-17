@@ -1,0 +1,33 @@
+services:
+
+  # ── OpenTelemetry Collector ───────────────────────────────────────────────────
+  # Receives traces + metrics from the app and pushes them to Scaleway Cockpit.
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: namp-otelcollector
+    ports:
+      - "4317:4317"     # OTLP gRPC  (app → collector)
+      - "4318:4318"     # OTLP HTTP  (app → collector)
+    volumes:
+      - ./docker/otel-collector-config-scaleway.yml:/etc/otelcol/config.yml
+    command: ["--config=/etc/otelcol/config.yml"]
+    env_file:
+      - .env            # SCALEWAY_COCKPIT_TOKEN, SCALEWAY_TRACES_ENDPOINT, SCALEWAY_METRICS_ENDPOINT
+    restart: unless-stopped
+
+  # ── Grafana Pyroscope — continuous profiling / flame graphs ──────────────────
+  # Scaleway Cockpit does not include Pyroscope — it is run locally.
+  pyroscope:
+    image: grafana/pyroscope:latest
+    container_name: namp-pyroscope
+    ports:
+      - "4040:4040"
+    volumes:
+      - pyroscope-data:/var/lib/pyroscope
+    command:
+      - "-pyroscopedb.data-path=/var/lib/pyroscope"
+      - "-server.http-listen-port=4040"
+    restart: unless-stopped
+
+volumes:
+  pyroscope-data:

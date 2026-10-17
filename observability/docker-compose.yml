@@ -1,0 +1,76 @@
+services:
+
+  # ── Grafana — unified traces + metrics UI ─────────────────────────────────────
+  grafana:
+    # Built from source: the image bundles the NetAmpowering panel plugin and its dashboard.
+    build:
+      context: ../grafana-plugin
+      dockerfile: ../observability/docker/grafana.Dockerfile
+    image: netampowering-grafana
+    container_name: namp-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./docker/grafana-provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana/data
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=netampowering-apm-panel
+    depends_on:
+      - tempo
+      - prometheus
+    restart: unless-stopped
+
+  # ── Grafana Tempo — traces backend ────────────────────────────────────────────
+  tempo:
+    image: grafana/tempo:2.8.2
+    container_name: namp-tempo
+    ports:
+      - "3200:3200"     # HTTP API (Grafana datasource)
+      - "4317:4317"     # OTLP gRPC (applications → Tempo)
+      - "4318:4318"     # OTLP HTTP (applications → Tempo)
+    volumes:
+      - ./docker/tempo.yml:/etc/tempo/tempo.yml
+      - tempo-data:/var/tempo
+    command: ["-config.file=/etc/tempo/tempo.yml"]
+    restart: unless-stopped
+
+  # ── Prometheus — metrics (RED + .NET runtime) ─────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: namp-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+      - "--web.enable-lifecycle"
+      - "--enable-feature=exemplar-storage"
+      - "--web.enable-otlp-receiver"                # OTLP metrics: POST /api/v1/otlp/v1/metrics
+      - "--web.enable-remote-write-receiver"        # RED metrics pushed by Tempo
+    restart: unless-stopped
+
+  # ── Grafana Pyroscope — continuous profiling / flame graphs ──────────────────
+  pyroscope:
+    image: grafana/pyroscope:latest
+    container_name: namp-pyroscope
+    ports:
+      - "4040:4040"
+    volumes:
+      - pyroscope-data:/var/lib/pyroscope
+    command:
+      - "-pyroscopedb.data-path=/var/lib/pyroscope"
+      - "-server.http-listen-port=4040"
+    restart: unless-stopped
+
+volumes:
+  grafana-data:
+  tempo-data:
+  prometheus-data:
+  pyroscope-data:

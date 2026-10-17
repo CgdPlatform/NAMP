@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>@ViewBag.Title - NetAmpowering Demo MVC 5</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; margin: 2rem; }
+    table { border-collapse: collapse; } td, th { border: 1px solid #ccc; padding: .3rem .8rem; }
+    nav a { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    @Html.ActionLink("Accueil", "Index", "Home")
+    @Html.ActionLink("Meteo (8 jours)", "Weather", "Home", new { days = 8 }, null)
+    @Html.ActionLink("Meteo (3 jours)", "Weather", "Home", new { days = 3 }, null)
+    @Html.ActionLink("Action en erreur", "Fail", "Home")
+  </nav>
+  <hr />
+  @RenderBody()
+</body>
+</html>

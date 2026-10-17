@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "IIS Express (.NET Framework)": {
+      "commandName": "Executable",
+      "executablePath": "$(ProgramFiles)\\IIS Express\\iisexpress.exe",
+      "commandLineArgs": "/path:\"$(MSBuildProjectDirectory)\" /port:5302 /clr:v4.0",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:5302/"
+    }
+  }
+}

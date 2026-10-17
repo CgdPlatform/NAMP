@@ -1,0 +1,62 @@
+# Grafana Tempo - Traces backend (replaces Jaeger)
+#
+# Flow: applications (OTLP :4317 gRPC / :4318 HTTP) → Tempo → Grafana (:3200)
+# Tempo's metrics-generator produces the RED metrics + service graph and pushes them to Prometheus
+# (remote write): no OTel Collector is needed.
+
+server:
+  http_listen_port: 3200
+  log_level: warn
+
+# OTLP receivers: applications send their traces straight to Tempo
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+
+ingester:
+  max_block_duration: 5m
+
+compactor:
+  compaction:
+    block_retention: 72h   # keeps 3 days of traces locally
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: data\tempo\blocks
+    wal:
+      path: data\tempo\wal
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: data\tempo\generator\wal
+    remote_write:
+      - url: http://localhost:9090/api/v1/write
+        send_exemplars: true
+  # Required by Grafana Traces Drilldown / TraceQL metrics queries ({...} | rate())
+  traces_storage:
+    path: data	empo\generator	races
+  processor:
+    span_metrics:
+      dimensions:
+        - http.method
+        - http.status_code
+        - http.route
+        - service.version
+    local_blocks:
+      filter_server_spans: false
+      flush_to_storage: true
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics, local-blocks]

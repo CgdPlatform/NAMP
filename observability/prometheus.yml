@@ -1,0 +1,8 @@
+# Prometheus — local config
+#
+# No scraping: applications push their metrics over OTLP straight to Prometheus
+# (--web.enable-otlp-receiver) and Tempo pushes the RED metrics there (--web.enable-remote-write-receiver).
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
