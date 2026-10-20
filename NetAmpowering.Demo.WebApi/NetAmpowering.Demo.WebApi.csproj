@@ -17,12 +17,10 @@
     <PackageReference Include="NetAmpowering.Observability.EntityFrameworkCore" Version="1.0.0-beta.1" />
     <PackageReference Include="NetAmpowering.Coverage.Runtime" Version="1.0.0" />
     <!-- Le weaver Fody : instrumente les methodes a la compilation (couverture de code en production) -->
-    <PackageReference Include="NetAmpowering.Coverage" Version="1.0.0" PrivateAssets="all" />
+    <PackageReference Include="NetAmpowering.Coverage" Version="1.1.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Le package NetAmpowering.Coverage ne declare pas son weaver a Fody : chemin explicite vers la DLL du package -->
-    <WeaverFiles Include="$(NuGetPackageRoot)netampowering.coverage/1.0.0/lib/netstandard2.0/NetAmpowering.Coverage.dll" />
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
 
